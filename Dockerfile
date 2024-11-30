@@ -1,27 +1,26 @@
-# Dockerfile
+# Gunakan image Node.js Alpine untuk mengurangi ukuran image
+FROM node:16-alpine
 
-# Use node alpine as it's a small node image
-FROM node:16
-
-# Create the directory on the node image 
-# where our Next.js app will live
-RUN mkdir -p /app
-
-# Set /app as the working directory
+# Tetapkan direktori kerja
 WORKDIR /app
 
-# Copy package.json and package-lock.json
-# to the /app working directory
-COPY package*.json /app
+# Salin file package.json dan yarn.lock ke dalam container
+COPY package*.json ./
 
-# Install dependencies in /app
+# Instal dependensi
 RUN yarn install
 
-# Copy the rest of our Next.js folder into /app
-COPY . /app
+# Salin seluruh kode aplikasi ke container
+COPY . .
 
-# Ensure port 3000 is accessible to our system
+# Tetapkan variabel lingkungan untuk production (opsional)
+ENV NODE_ENV=production
+
+# Build aplikasi (jika untuk production)
+RUN yarn build
+
+# Pastikan port 3000 terbuka
 EXPOSE 3000
 
-# Run yarn dev, as we would via the command line 
-CMD ["yarn", "dev"]
+# Jalankan aplikasi (gunakan "dev" untuk pengembangan)
+CMD ["yarn", "start"]
